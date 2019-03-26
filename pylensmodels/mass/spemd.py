@@ -44,11 +44,12 @@ class SPEMD_glee(BaseMassModel):
         f_x_, f_y_ = fl.fastelldefl(x1, x2, self.q_fastell, self.gamma, 
                                             arat=self.q, s2=self.s2)
         
-        # corresponds to rotation of the shear matrix (Menegetthi16), but why this is needed...
-        cos_phi, sin_phi = np.cos(self.phi), np.sin(self.phi)
-        f_x = cos_phi*f_x_ - sin_phi*f_y_
-        f_y = sin_phi*f_x_ + cos_phi*f_y_
-
+        # # corresponds to rotation of the shear matrix (Menegetthi16), but why this is needed...
+        # cos_phi, sin_phi = np.cos(self.phi), np.sin(self.phi)
+        # f_x = cos_phi*f_x_ - sin_phi*f_y_
+        # f_y = sin_phi*f_x_ + cos_phi*f_y_
+        f_x = f_x_
+        f_y = f_y_
         return f_x, f_x
 
     def hessian(self, x, y):
@@ -60,7 +61,7 @@ class SPEMD_glee(BaseMassModel):
                                                        self.gamma, arat=self.q, 
                                                        s2=self.s2)
         
-        # corresponds to rotation of the shear matrix (Menegetthi16), but why this is needed...
+        # # corresponds to rotation of the shear matrix (Menegetthi16), but why this is needed...
         # kappa = (f_xx_ + f_yy_) / 2.
         # gamma1_ = (f_xx_ - f_yy_) / 2.
         # gamma2_ = f_xy_
@@ -73,8 +74,11 @@ class SPEMD_glee(BaseMassModel):
         # f_xx = kappa + gamma1
         # f_yy = kappa - gamma1
         # f_xy = gamma2
-        f_yx_ = f_xy_
-        return f_xx_, f_yy_, f_xy_, f_yx_
+        f_xx = f_xx_
+        f_yy = f_yy_
+        f_xy = f_xy_
+        f_yx = f_yx
+        return f_xx, f_yy, f_xy, f_yx
 
     def deflection(self, x, y):
         """return deflection angles"""
