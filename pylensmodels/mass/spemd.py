@@ -44,7 +44,6 @@ class SPEMD_glee(BaseMassModel):
         f_x_, f_y_ = fl.fastelldefl(x1, x2, self.q_fastell, self.gamma, 
                                             arat=self.q, s2=self.s2)
         
-        # # corresponds to rotation of the shear matrix (Menegetthi16), but why this is needed...
         # cos_phi, sin_phi = np.cos(self.phi), np.sin(self.phi)
         # f_x = cos_phi*f_x_ - sin_phi*f_y_
         # f_y = sin_phi*f_x_ + cos_phi*f_y_
@@ -61,7 +60,6 @@ class SPEMD_glee(BaseMassModel):
                                                        self.gamma, arat=self.q, 
                                                        s2=self.s2)
         
-        # # corresponds to rotation of the shear matrix (Menegetthi16), but why this is needed...
         # kappa = (f_xx_ + f_yy_) / 2.
         # gamma1_ = (f_xx_ - f_yy_) / 2.
         # gamma2_ = f_xy_
@@ -77,7 +75,7 @@ class SPEMD_glee(BaseMassModel):
         f_xx = f_xx_
         f_yy = f_yy_
         f_xy = f_xy_
-        f_yx = f_yx
+        f_yx = f_xy
         return f_xx, f_yy, f_xy, f_yx
 
     def deflection(self, x, y):
@@ -98,7 +96,7 @@ class SPEMD_glee(BaseMassModel):
         f_xx, f_yy, f_xy, f_yx = self.hessian(x, y)
         gamma1 = 0.5 * (f_xx - f_yy) # shear, 1st component
         gamma2 = f_xy # shear, 2nd component
-        return gamma1, gamma2 
+        return gamma1, gamma2
 
     def _extract_values(self, kw_params):
         self.theta_E = self._get_value('theta_E', kw_params, _defaults)
