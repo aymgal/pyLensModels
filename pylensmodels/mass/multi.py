@@ -41,6 +41,28 @@ class MultiMass(object):
             f_yx += f_yx_
         return f_xx, f_yy, f_xy, f_yx
 
+    def deflection(self, x, y):
+        alpha1, alpha2 = 0., 0.
+        for model in self.models:
+            alpha1_, alpha2_ = model.deflection(x, y)
+            alpha1 += alpha1_
+            alpha2 += alpha2_
+        return alpha1, alpha2
+
+    def shear(self, x, y):
+        gamma1, gamma2 = 0., 0.
+        for model in self.models:
+            gamma1_, gamma2_ = model.shear(x, y)
+            gamma1 += gamma1_
+            gamma2 += gamma2_
+        return gamma1, gamma2
+
+    def convergence(self, x, y):
+        kappa = 0.
+        for model in self.models:
+            kappa += model.convergence(x, y)
+        return kappa
+
     def hessian_numdiff(self, x, y, diff=1e-7, method='2-points'):
         """using numerical differentiation from 1st order derivatives"""
         f_x, f_y = self.derivative(x, y)

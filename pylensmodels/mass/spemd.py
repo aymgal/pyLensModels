@@ -20,10 +20,10 @@ _defaults = {
 
 class SPEMD_glee(BaseMassModel):
 
-    def __init__(self, kwargs_parameters):
+    def __init__(self, kwargs_parameters, rotation_fix=True):
         super(SPEMD_glee, self).__init__(kwargs_parameters)
+        self._rotation_fix = rotation_fix
         self._extract_values(kwargs_parameters)
-        self._add_conversions()
 
     def potential(self, x, y):
         """return the SPEMD 2D potential
@@ -44,11 +44,13 @@ class SPEMD_glee(BaseMassModel):
         f_x_, f_y_ = fl.fastelldefl(x1, x2, self.q_fastell, self.gamma, 
                                             arat=self.q, s2=self.s2)
         
-        # cos_phi, sin_phi = np.cos(self.phi), np.sin(self.phi)
-        # f_x = cos_phi*f_x_ - sin_phi*f_y_
-        # f_y = sin_phi*f_x_ + cos_phi*f_y_
-        f_x = f_x_
-        f_y = f_y_
+        if self._rotation_fix:
+            cos_phi, sin_phi = np.cos(self.phi), np.sin(self.phi)
+            f_x = cos_phi*f_x_ - sin_phi*f_y_
+            f_y = sin_phi*f_x_ + cos_phi*f_y_
+        else:
+            f_x = f_x_
+            f_y = f_y_
         return f_x, f_x
 
     def hessian(self, x, y):
@@ -57,24 +59,27 @@ class SPEMD_glee(BaseMassModel):
         
         # call Fastell's routine
         _, _, f_xx_, f_yy_, f_xy_ = fl.fastellmag(x1, x2, self.q_fastell, 
-                                                       self.gamma, arat=self.q, 
-                                                       s2=self.s2)
+                                                  self.gamma, arat=self.q, 
+                                                  s2=self.s2)
         
-        # kappa = (f_xx_ + f_yy_) / 2.
-        # gamma1_ = (f_xx_ - f_yy_) / 2.
-        # gamma2_ = f_xy_
+        if self._rotation_fix:
+            kappa = (f_xx_ + f_yy_) / 2.
+            gamma1_ = (f_xx_ - f_yy_) / 2.
+            gamma2_ = f_xy_
 
-        # cos_2phi = np.cos(2.*self.phi)
-        # sin_2phi = np.sin(2.*self.phi)
-        # gamma1 = cos_2phi*gamma1_ - sin_2phi*gamma2_
-        # gamma2 = sin_2phi*gamma1_ + cos_2phi*gamma2_
+            cos_2phi = np.cos(2.*self.phi)
+            sin_2phi = np.sin(2.*self.phi)
+            gamma1 = cos_2phi*gamma1_ - sin_2phi*gamma2_
+            gamma2 = sin_2phi*gamma1_ + cos_2phi*gamma2_
 
-        # f_xx = kappa + gamma1
-        # f_yy = kappa - gamma1
-        # f_xy = gamma2
-        f_xx = f_xx_
-        f_yy = f_yy_
-        f_xy = f_xy_
+            f_xx = kappa + gamma1
+            f_yy = kappa - gamma1
+            f_xy = gamma2
+        else:
+            f_xx = f_xx_
+            f_yy = f_yy_
+            f_xy = f_xy_
+
         f_yx = f_xy
         return f_xx, f_yy, f_xy, f_yx
 
@@ -106,6 +111,7 @@ class SPEMD_glee(BaseMassModel):
         self.q = self._get_value('q', kw_params, _defaults)
         self.phi = self._get_value('phi', kw_params, _defaults)
         self.r_core = self._get_value('r_core', kw_params, _defaults)
+        self._add_conversions()
 
     def _add_conversions(self):
         self.q_fastell, self.arat, self.s2 \

@@ -50,7 +50,7 @@ class ExternalShear_glee(BaseMassModel):
         f_yx = np.ones_like(x) * f_xy
         return f_xx, f_yy, f_xy, f_yx
 
-    def deflection(x, y, x0, y0, phi, gamma_ext):
+    def deflection(self, x, y):
         f_x, f_y = self.derivative(x, y)
         alpha1 = f_x
         alpha2 = f_y
