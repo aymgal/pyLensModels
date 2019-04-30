@@ -33,7 +33,7 @@ class SPEMD_glee(BaseMassModel):
         
         # call Fastell's routine
         psi = fl.ellipphi(x1, x2, self.q_fastell, self.gamma, 
-                                  arat=self.arat, s2=self.s2)
+                          arat=self.arat, s2=self.s2)
         return psi
 
     def derivative(self, x, y):
@@ -42,12 +42,13 @@ class SPEMD_glee(BaseMassModel):
         
         # call Fastell's routine
         f_x_, f_y_ = fl.fastelldefl(x1, x2, self.q_fastell, self.gamma, 
-                                            arat=self.q, s2=self.s2)
+                                    arat=self.q, s2=self.s2)
         
         if self._rotation_fix:
-            cos_phi, sin_phi = np.cos(self.phi), np.sin(self.phi)
-            f_x = cos_phi*f_x_ - sin_phi*f_y_
-            f_y = sin_phi*f_x_ + cos_phi*f_y_
+            cos_phi = np.cos(self.phi)
+            sin_phi = np.sin(self.phi)
+            f_x = f_x_*cos_phi - f_y_*sin_phi
+            f_y = f_x_*sin_phi + f_y_*cos_phi
         else:
             f_x = f_x_
             f_y = f_y_
@@ -69,8 +70,8 @@ class SPEMD_glee(BaseMassModel):
 
             cos_2phi = np.cos(2.*self.phi)
             sin_2phi = np.sin(2.*self.phi)
-            gamma1 = cos_2phi*gamma1_ - sin_2phi*gamma2_
-            gamma2 = sin_2phi*gamma1_ + cos_2phi*gamma2_
+            gamma1 = gamma1_*cos_2phi - gamma2_*sin_2phi
+            gamma2 = gamma1_*sin_2phi + gamma2_*cos_2phi
 
             f_xx = kappa + gamma1
             f_yy = kappa - gamma1

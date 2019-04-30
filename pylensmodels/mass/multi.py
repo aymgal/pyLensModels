@@ -63,6 +63,20 @@ class MultiMass(object):
             kappa += model.convergence(x, y)
         return kappa
 
+    def derivative_numdiff(self, x, y, diff=1e-7, method='2-points'):
+        """using numerical differentiation from 1st order derivatives"""
+        f = self.potential(x, y)
+        f_dx = self.potential(x + diff, y)
+        f_dy = self.potential(x, y + diff)
+
+        # differentiation
+        if method == '2-points':
+            f_x = (f_dx - f) / diff
+            f_y = (f_dy - f) / diff
+        else:
+            raise NotImplementedError("Only the 2-points method is currently implemented")
+        return f_x, f_y
+
     def hessian_numdiff(self, x, y, diff=1e-7, method='2-points'):
         """using numerical differentiation from 1st order derivatives"""
         f_x, f_y = self.derivative(x, y)
