@@ -11,7 +11,7 @@ import pylensmodels.utils.coordinates as coord
 _defaults = {
     'x0': 0.,
     'y0': 0.,
-    'gamma': 2.,
+    'gamma': 0.4,
     'theta_E': 10.,
     'q': 1.,
     'phi': 0.,
@@ -83,26 +83,6 @@ class SPEMD_glee(BaseMassModel):
 
         f_yx = f_xy
         return f_xx, f_yy, f_xy, f_yx
-
-    def deflection(self, x, y):
-        """return deflection angles"""
-        f_x, f_y = self.derivative(x, y)
-        alpha1 = f_x
-        alpha2 = f_y
-        return alpha1, alpha2
-
-    def convergence(self, x, y):
-        """return convergence map"""
-        f_xx, f_yy, _, _ = self.hessian(x, y)    
-        kappa = (f_xx + f_yy) / 2.  # convergence
-        return kappa
-
-    def shear(self, x, y):
-        """return shear map"""
-        f_xx, f_yy, f_xy, f_yx = self.hessian(x, y)
-        gamma1 = 0.5 * (f_xx - f_yy) # shear, 1st component
-        gamma2 = f_xy # shear, 2nd component
-        return gamma1, gamma2
 
     def _extract_values(self, kw_params):
         self.theta_E = self._get_value('theta_E', kw_params, _defaults)

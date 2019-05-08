@@ -50,22 +50,6 @@ class ExternalShear_glee(BaseMassModel):
         f_yx = np.ones_like(x) * f_xy
         return f_xx, f_yy, f_xy, f_yx
 
-    def deflection(self, x, y):
-        f_x, f_y = self.derivative(x, y)
-        alpha1 = f_x
-        alpha2 = f_y
-        return alpha1, alpha2
-
-    def convergence(self, x, y):
-        assert x.shape == y.shape
-        return np.zeros_like(x)
-
-    def shear(self, x, y):
-        assert x.shape == y.shape
-        gamma1 = np.ones_like(x) * self.gamma_ext*np.cos(2.*self.phi)
-        gamma2 = np.ones_like(x) * self.gamma_ext*np.sin(2.*self.phi)
-        return gamma1, gamma2
-
     def _extract_values(self, kw_params):
         self.gamma_ext = self._get_value('gamma_ext', kw_params, _defaults)
         self.phi = self._get_value('phi', kw_params, _defaults)
