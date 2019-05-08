@@ -29,7 +29,7 @@ class ExternalShear_glee(BaseMassModel):
         return psi
 
     def derivative(self, x, y):
-        assert x.shape == y.shape
+        assert x.shape == y.shape, "External shear requires same axis dimensions"
         xs, ys = coord.shift_center(x, y, self.x0, self.y0)
         e1 = self.gamma_ext*np.cos(2.*self.phi)
         e2 = self.gamma_ext*np.sin(2.*self.phi)
@@ -38,7 +38,7 @@ class ExternalShear_glee(BaseMassModel):
         return f_x, f_y
 
     def hessian(self, x, y):
-        assert x.shape == y.shape
+        assert x.shape == y.shape, "External shear requires same axis dimensions"
         e1 = self.gamma_ext*np.cos(2.*self.phi)
         e2 = self.gamma_ext*np.sin(2.*self.phi)
         kappa = 0.
