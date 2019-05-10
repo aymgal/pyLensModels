@@ -4,6 +4,8 @@ from astropy.cosmology import LambdaCDM
 
 
 def distance_lcdm(z1, z2, omega_m, omega_l, H0):
+    """ANGULAR distance distance from z1 to z2
+    """
     cosmo = LambdaCDM(H0, omega_m, omega_l)
     a = 1. / (1. + z2)
     ctd1 = cosmo.comoving_transverse_distance(z1)

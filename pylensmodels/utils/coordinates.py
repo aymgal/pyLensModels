@@ -19,8 +19,9 @@ def shift_and_rotate(x, y, x0, y0, phi):
     x1, x2 = rotate_axes(xs, ys, phi)
     return x1, x2
 
-def array_to_image(one_d_array, n2):
-    n = int(np.sqrt(n2))
+def array_to_image(one_d_array):
+    n2 = np.size(one_d_array)
+    n  = int(np.sqrt(n2))
     two_d_shape = (n, n)
     try:
         two_d_array = one_d_array.reshape(two_d_shape)

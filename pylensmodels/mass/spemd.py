@@ -20,12 +20,13 @@ _defaults = {
 
 class SPEMD_glee(BaseMassModel):
 
-    def __init__(self, kwargs_parameters, rotation_fix=True):
-        super(SPEMD_glee, self).__init__(kwargs_parameters)
+    def __init__(self, kwargs_parameters, rotation_fix=True,
+                 **base_class_kwargs):
+        super().__init__(kwargs_parameters, **base_class_kwargs)
         self._rotation_fix = rotation_fix
         self._extract_values(kwargs_parameters)
 
-    def potential(self, x, y):
+    def function(self, x, y):
         """return the SPEMD 2D potential
         'phi' is the position angle, 'theta_E' is the Einstein radius
         """
@@ -34,7 +35,7 @@ class SPEMD_glee(BaseMassModel):
         # call Fastell's routine
         psi = fl.ellipphi(x1, x2, self.q_fastell, self.gamma, 
                           arat=self.arat, s2=self.s2)
-        return psi
+        return self._Dds_Ds_scaling(psi)
 
     def derivative(self, x, y):
         """return 1st order derivatives"""
@@ -52,7 +53,7 @@ class SPEMD_glee(BaseMassModel):
         else:
             f_x = f_x_
             f_y = f_y_
-        return f_x, f_x
+        return self._Dds_Ds_scaling(f_x, f_x)
 
     def hessian(self, x, y):
         """return 2nd order derivatives"""
@@ -64,8 +65,8 @@ class SPEMD_glee(BaseMassModel):
                                                   s2=self.s2)
         
         if self._rotation_fix:
-            kappa = (f_xx_ + f_yy_) / 2.
-            gamma1_ = (f_xx_ - f_yy_) / 2.
+            kappa   = 0.5 * (f_xx_ + f_yy_)
+            gamma1_ = 0.5 * (f_xx_ - f_yy_)
             gamma2_ = f_xy_
 
             cos_2phi = np.cos(2.*self.phi)
@@ -82,7 +83,7 @@ class SPEMD_glee(BaseMassModel):
             f_xy = f_xy_
 
         f_yx = f_xy
-        return f_xx, f_yy, f_xy, f_yx
+        return self._Dds_Ds_scaling(f_xx, f_yy, f_xy, f_yx)
 
     def _extract_values(self, kw_params):
         self.theta_E = self._get_value('theta_E', kw_params, _defaults)

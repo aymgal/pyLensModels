@@ -8,26 +8,33 @@ from pylensmodels.utils import lensing
 
 
 class MultiMass(BaseMassModel):
+    """The distance ratio scaling (Dds/Ds) is assumed to be performed by 
+    individual model class methods 'potential', 'derivative', 'hessian'.
+    """
 
-    def __init__(self, model_list, Dds_Ds=None):
-        self.model_list = model_list
-        self.models = []
+    def __init__(self, model_list, **base_class_kwargs):
+        self.model_list = []
+        kwargs_parameters_list = []
         for model in model_list:
             if isinstance(model, BaseMassModel):
-                self.models.append(model)
+                self.model_list.append(model)
+                kwargs_parameters_list.append(model.init_parameters)
             else:
                 print("WARNING : model {} is not an instance of the base class (model ignored)")
-        self._Dds_Ds = Dds_Ds
+        
+        # we pass to the mother class a lost of kwargs
+        # (ATTENTION, to be changed in future)
+        super().__init__(kwargs_parameters_list, **base_class_kwargs)
 
-    def potential(self, x, y):
+    def function(self, x, y):
         pot = 0.
-        for model in self.models:
+        for model in self.model_list:
             pot += model.potential(x, y)
         return pot
 
     def derivative(self, x, y):
         f_x, f_y = 0., 0.
-        for model in self.models:
+        for model in self.model_list:
             f_x_, f_y_ = model.derivative(x, y)
             f_x += f_x_
             f_y += f_y_
@@ -35,19 +42,10 @@ class MultiMass(BaseMassModel):
 
     def hessian(self, x, y):
         f_xx, f_yy, f_xy, f_yx = 0., 0., 0., 0.
-        for model in self.models:
+        for model in self.model_list:
             f_xx_, f_yy_, f_xy_, f_yx_ = model.hessian(x, y)
             f_xx += f_xx_
             f_yy += f_yy_
             f_xy += f_xy_
             f_yx += f_yx_
-
-        if self._Dds_Ds is not None:
-            # scale second derivatives by the distance ratio Dds/Ds
-            f_xx *= self._Dds_Ds
-            f_yy *= self._Dds_Ds
-            f_xy *= self._Dds_Ds
-            f_yx *= self._Dds_Ds
-
         return f_xx, f_yy, f_xy, f_yx
-        
