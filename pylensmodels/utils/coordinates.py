@@ -3,6 +3,13 @@ __author__ = 'aymgal'
 import numpy as np
 
 
+def square_grid(n, step=1):
+    a = np.arange(0, n, step=step)
+    mesh = np.dstack(np.meshgrid(a, a)).reshape(-1, 2).astype(float)
+    x = mesh[:, 0]
+    y = mesh[:, 1]
+    return x, y
+
 def shift_center(x, y, x0, y0):
     # shift the center of the coordinates
     return x-x0, y-y0
@@ -20,6 +27,7 @@ def shift_and_rotate(x, y, x0, y0, phi):
     return x1, x2
 
 def array_to_image(one_d_array):
+    print("YOUHOU", one_d_array)
     n2 = np.size(one_d_array)
     n  = int(np.sqrt(n2))
     two_d_shape = (n, n)

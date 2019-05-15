@@ -35,7 +35,7 @@ class ExternalShear_glee(BaseMassModel):
         # phi = np.arctan2(ys, xs)
         # psi = 0.5 * self.gamma_ext * r**2 * np.cos(2. * ( phi - self.phi_ext ))
 
-        return self._Dds_Ds_scaling(psi)
+        return psi
 
     def derivative(self, x, y):
         assert x.shape == y.shape, "External shear requires same axis dimensions"
@@ -44,7 +44,7 @@ class ExternalShear_glee(BaseMassModel):
         gamma_sin2phi = self.gamma_ext * np.sin(2.*self.phi_ext)
         f_x = xs * gamma_cos2phi + ys * gamma_sin2phi
         f_y = xs * gamma_sin2phi - ys * gamma_cos2phi
-        return self._Dds_Ds_scaling(f_x, f_y)
+        return f_x, f_y
 
     def hessian(self, x, y):
         assert x.shape == y.shape, "External shear requires same axis dimensions"
@@ -57,7 +57,7 @@ class ExternalShear_glee(BaseMassModel):
         f_yy = np.ones_like(x) * (kappa - gamma1)
         f_xy = np.ones_like(x) * gamma2
         f_yx = np.ones_like(x) * f_xy
-        return self._Dds_Ds_scaling(f_xx, f_yy, f_xy, f_yx)
+        return f_xx, f_yy, f_xy, f_yx
 
     def _extract_values(self, kw_params):
         self.gamma_ext = self._get_value('gamma_ext', kw_params, _defaults)

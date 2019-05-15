@@ -35,7 +35,7 @@ class SPEMD_glee(BaseMassModel):
         # call Fastell's routine
         psi = fl.ellipphi(x1, x2, self.q_fastell, self.gamma, 
                           arat=self.arat, s2=self.s2)
-        return self._Dds_Ds_scaling(psi)
+        return psi
 
     def derivative(self, x, y):
         """return 1st order derivatives"""
@@ -53,7 +53,7 @@ class SPEMD_glee(BaseMassModel):
         else:
             f_x = f_x_
             f_y = f_y_
-        return self._Dds_Ds_scaling(f_x, f_x)
+        return f_x, f_x
 
     def hessian(self, x, y):
         """return 2nd order derivatives"""
@@ -83,7 +83,7 @@ class SPEMD_glee(BaseMassModel):
             f_xy = f_xy_
 
         f_yx = f_xy
-        return self._Dds_Ds_scaling(f_xx, f_yy, f_xy, f_yx)
+        return f_xx, f_yy, f_xy, f_yx
 
     def _extract_values(self, kw_params):
         self.theta_E = self._get_value('theta_E', kw_params, _defaults)
