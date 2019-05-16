@@ -22,7 +22,7 @@ class MultiMass(BaseMassModel):
             else:
                 print("WARNING : model {} is not an instance of the base class (model ignored)")
         
-        # we pass to the mother class a lost of kwargs
+        # we pass to the mother class a lot of kwargs
         # (ATTENTION, to be changed in future)
         super().__init__(kwargs_parameters_list, **base_class_kwargs)
 
@@ -44,6 +44,26 @@ class MultiMass(BaseMassModel):
         f_xx, f_yy, f_xy, f_yx = 0., 0., 0., 0.
         for model in self.model_list:
             f_xx_, f_yy_, f_xy_, f_yx_ = model.hessian(x, y)
+            f_xx += f_xx_
+            f_yy += f_yy_
+            f_xy += f_xy_
+            f_yx += f_yx_
+        return f_xx, f_yy, f_xy, f_yx
+
+    def derivative_numdiff(self, x, y, diff=1e-7, method='2-points'):
+        f_x, f_y = 0., 0.
+        for model in self.model_list:
+            f_x_, f_y_ = model.derivative_numdiff(x, y, diff=diff, method=method)
+            f_x += f_x_
+            f_y += f_y_
+        return f_x, f_y
+
+    def hessian_numdiff(self, x, y, diff=1e-7, method='2-points', recursive=False):
+        f_xx, f_yy, f_xy, f_yx = 0., 0., 0., 0.
+        for model in self.model_list:
+            f_xx_, f_yy_, f_xy_, f_yx_ = \
+                model.hessian_numdiff(x, y, diff=diff, method=method, 
+                                      recursive=recursive)
             f_xx += f_xx_
             f_yy += f_yy_
             f_xy += f_xy_

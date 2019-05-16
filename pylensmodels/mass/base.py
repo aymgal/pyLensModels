@@ -15,7 +15,7 @@ class BaseMassModel(object):
 
     def __init__(self, kwargs_parameters, Dds_Ds=None):
         self.init_parameters = kwargs_parameters
-        self._Dds_Ds = Dds_Ds
+        self.Dds_Ds = Dds_Ds
 
     def function(self, x, y):
         """return potential (as 1D array)"""
@@ -31,9 +31,9 @@ class BaseMassModel(object):
 
     def derivative_numdiff(self, x, y, diff=1e-7, method='2-points'):
         """using numerical differentiation from 1st order derivatives"""
-        f = self.potential(x, y)
-        f_dx = self.potential(x + diff, y)
-        f_dy = self.potential(x, y + diff)
+        f = self.function(x, y)
+        f_dx = self.function(x + diff, y)
+        f_dy = self.function(x, y + diff)
 
         # differentiation
         if method == '2-points':
@@ -78,10 +78,8 @@ class BaseMassModel(object):
         else:
             f_x, f_y = self.derivative_numdiff(x, y, **numdiff_kwargs)
         f_x, f_y = self._Dds_Ds_scaling(f_x, f_y)
-        alpha1 = f_x
-        alpha2 = f_y
-        alpha1 = coord.array_to_image(alpha1)
-        alpha2 = coord.array_to_image(alpha2)
+        alpha1 = coord.array_to_image(f_x)
+        alpha2 = coord.array_to_image(f_y)
         return alpha1, alpha2
 
     def convergence(self, x, y, numdiff_kwargs=None):
@@ -123,8 +121,8 @@ class BaseMassModel(object):
         return kw_params.get(name, kw_defaults[name])
 
     def _Dds_Ds_scaling(self, *values):
-        if self._Dds_Ds is None:
+        if self.Dds_Ds is None:
             values_scaled = values
         else:
-            values_scaled = tuple([v * self._Dds_Ds for v in values])
+            values_scaled = tuple([v * self.Dds_Ds for v in values])
         return values_scaled[0] if len(values_scaled) == 1 else values_scaled

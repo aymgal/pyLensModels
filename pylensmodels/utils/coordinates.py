@@ -27,7 +27,6 @@ def shift_and_rotate(x, y, x0, y0, phi):
     return x1, x2
 
 def array_to_image(one_d_array):
-    print("YOUHOU", one_d_array)
     n2 = np.size(one_d_array)
     n  = int(np.sqrt(n2))
     two_d_shape = (n, n)
