@@ -3,7 +3,7 @@ __author__ = 'aymgal'
 import numpy as np
 from fastell4py import fastell4py
 
-from pylensmodels.mass.base import BaseMassModel
+from pylensmodels.mass.base_mass import BaseMassModel
 from pylensmodels.utils import lensing
 
 

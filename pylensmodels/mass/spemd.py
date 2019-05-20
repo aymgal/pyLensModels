@@ -3,7 +3,7 @@ __author__ = 'aymgal'
 import numpy as np
 import fastell4py.fastell4py as fl
 
-from pylensmodels.mass.base import BaseMassModel
+from pylensmodels.mass.base_mass import BaseMassModel
 import pylensmodels.mass.conversions as conv
 import pylensmodels.utils.coordinates as coord
 
@@ -53,7 +53,7 @@ class SPEMD_glee(BaseMassModel):
         else:
             f_x = f_x_
             f_y = f_y_
-        return f_x, f_x
+        return f_x, f_y
 
     def hessian(self, x, y):
         """return 2nd order derivatives"""
